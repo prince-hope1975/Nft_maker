@@ -2,73 +2,20 @@ import { useEffect, useState } from "react";
 import { ThirdwebSDK } from "@3rdweb/sdk";
 import { useWeb3 } from "@3rdweb/hooks";
 import { useEthers } from "@usedapp/core";
-import axios  from "axios"
-// import * as fs from "fs/promises"
 
-import FormData  from "form-data"
 
 import Head from "next/head";
 const  Home =()=>{
 
-  const [name, setName] = useState(null)
-  const [key, setKey] = useState(null)
+  const [name, setName] = useState("default")
+  const [key, setKey] = useState("defaultVal")
+  const [acc, setAcc] = useState("0x0")
 
   const { connectWallet, address, error, provider } = useWeb3();
   console.log("👋 Address", address);
 
   const signer = provider ? provider.getSigner() : undefined;
-  const pinFileToIPFS = (pinataApiKey, pinataSecretApiKey) => {
-    const url = `https://api.pinata.cloud/pinning/pinFileToIPFS`;
-
-    //we gather a local file for this example, but any valid readStream source will work here.
-    let data = new FormData();
-    data.append("file", fs.createReadStream("./pic.png"));
-
-    //You'll need to make sure that the metadata is in the form of a JSON object that's been convered to a string
-    //metadata is optional
-    const metadata = JSON.stringify({
-      name: name,
-      keyvalues: {
-        exampleKey: key,
-      },
-    });
-    data.append("pinataMetadata", metadata);
-
-    //pinataOptions are optional
-    const pinataOptions = JSON.stringify({
-      cidVersion: 0,
-      customPinPolicy: {
-        regions: [
-          {
-            id: "FRA1",
-            desiredReplicationCount: 1,
-          },
-          {
-            id: "NYC1",
-            desiredReplicationCount: 2,
-          },
-        ],
-      },
-    });
-    data.append("pinataOptions", pinataOptions);
-
-    return axios
-      .post(url, data, {
-        maxBodyLength: "Infinity", //this is needed to prevent axios from erroring out with large files
-        headers: {
-          "Content-Type": `multipart/form-data; boundary=${data._boundary}`,
-          pinata_api_key: pinataApiKey,
-          pinata_secret_api_key: pinataSecretApiKey,
-        },
-      })
-      .then(function (response) {
-        console.log("response", response)
-        //handle response here
-      })
-      .catch(function (error) {
-        //handle error here
-      });
-  };
+ 
 
   if (!address) {
     return (
@@ -96,7 +43,7 @@ const  Home =()=>{
           <input type="text" onChange={(e) => setKey(e.target.value)} />
         </form>
 
-        <MintButton pinFileToIPFS={pinFileToIPFS} />
+        <MintButton keyVal={key} name={name} address={address} />
       </div>
     );
 }
@@ -125,25 +72,22 @@ const RenderAllNFTComponent = () => {
 };
 
 // A React component of mint button that makes a backend server request.
-const MintButton = ({ pinFileToIPFS }) => {
+const MintButton = ({name,keyVal, address}) => {
   // get the connected wallet address from your installed web3 react library from step (2)
-  const { account } = useEthers();
+  
+  // const { account } = useEthers();
 
   const onMintHandler = async () => {
-    const NftURL = await pinFileToIPFS(
-      process.env.API_KEY,
-      process.env.API_SECRET
-    );
+  
     // make a backend server api request to mint an NFT
-    console.log(NftURL);
-    // await fetch("/api/V1/mint", {
-
-    //   method: "POST",
-    //   headers: {
-    //     "content-type": "application/json",
-    //   },
-    //   body: JSON.stringify({ account, NftURL  }),
-    // });
+    // console.log(NftURL);
+    await fetch("/api/v1/mint", {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+      },
+      body: JSON.stringify({account: address || "default", name, keyVal}),
+    });
   };
 
   // render the button to mint a sword NFT
