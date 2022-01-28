@@ -38,4 +38,7 @@ The project rund on Etherum Rinkeby testnet and enables the user to either draw 
 - Algorand 
 - Pinata Api
 
+## Lion NFT 
+<img src="./Lion.png">
+
 preview the site <a href="">here# Nft
