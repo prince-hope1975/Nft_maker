@@ -10,14 +10,14 @@ const Home = () => {
   const [bool, setBool] = useState("0x0");
 
   const { connectWallet, address, error, provider } = useWeb3();
-  console.log("👋 Address", address);
+  console.log("👋 Address ✅", address);
 
   const signer = provider ? provider.getSigner() : undefined;
 
   if (!address) {
     return (
-      <div className="landing">
-        Welcome!!!, Please mint an NFT
+      <div className="w-full bg-green-300 h-screen">
+       
         <button onClick={() => connectWallet("injected")} className="btn-hero">
          Welcome Connect Your Wallet
         </button>

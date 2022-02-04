@@ -48,7 +48,6 @@ export default function mint(
 
     return axios
       .post(url, data, {
-        maxBodyLength: "Infinity", //this is needed to prevent axios from erroring out with large files
         headers: {
           "Content-Type": `multipart/form-data; boundary=${data._boundary}`,
           pinata_api_key: pinataApiKey,
@@ -91,14 +90,14 @@ export default function mint(
   return new Promise<void>(async (resolve) => {
     const NftURL = await pinFileToIPFS(process.env.API_KEY, process.env.API_SECRET)
    console.log("Successfully uploaded to ifps ==> Nft url",NftURL)
-const {data} = NftURL
+const {data: dataUrl} = NftURL
         // mint "My Sword" NFT to the wallet address that was requested.
         // note: async / await works too.
       return nft
         .mintTo(account, {
           name: name,
           description: keyVal,
-          image:`ipfs://${data.IpfsHash}`,
+          image:`ipfs://${dataUrl.IpfsHash}`,
         })
 
         .then((metadata) => {

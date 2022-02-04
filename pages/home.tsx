@@ -20,7 +20,7 @@ const  Home =()=>{
   if (!address) {
     return (
       <div className="landing">
-        Welcome!!!, Please mint an NFT 
+         
         <button onClick={() => connectWallet("injected")} className="btn-hero">
           Connect Your Wallet
         </button>
